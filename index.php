@@ -299,7 +299,19 @@ $app->post("/admin/categories/:idcategory", function($idcategory){
 
 	header("Location: /ecommerce/index.php/admin/categories");
 	exit;
+});
 
+$app->get("/categories/:idcategory", function($idcategory){
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$page = new Page();
+
+	$page->setTpl("category", [
+		'category'=>$category->getValues()
+	]);
 });
 
 
