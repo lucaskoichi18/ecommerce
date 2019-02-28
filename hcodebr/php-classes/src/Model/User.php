@@ -145,8 +145,8 @@ class User extends Model{
             $data = $results[0];
 
             $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :desip)", array(
-                ":iduser"=>$data["iduser"],
-                ":desip"=>$_SERVER["REMOTE_ADDR"]
+                ":iduser"=>$data['iduser'],
+                ":desip"=>$_SERVER['REMOTE_ADDR']
 
             ));
 
@@ -167,7 +167,7 @@ class User extends Model{
 
                     $link = "127.0.0.1/ecommerce/index.php/admin/forgot/reset?code=$result";
                 } else {
-                    $link = "127.0.0.1/ecommerce/index.php//forgot/reset?code=$result";
+                    $link = "127.0.0.1/ecommerce/index.php/forgot/reset?code=$result";
                 }             
 
                 $mailer = new Mailer($data['desemail'], $data['desperson'], "Redefinir Senha da Hcode Store", "forgot",
@@ -187,7 +187,7 @@ class User extends Model{
 
         $result = base64_decode($result);
         $code = mb_substr($result, openssl_cipher_iv_length('aes-256-cbc'), null, '8bit');
-        $iv = mb_substr($result, 0, openssl_cipher_iv_length('aes-256-cbc'), '8bit');
+        $iv = mb_substr($result, 0, openssl_cipher_iv_length('aes-256-cbc'), '8bit');;
         $idrecovery = openssl_decrypt($code, 'aes-256-cbc', User::SECRET, 0, $iv);
         $sql = new Sql();
         $results = $sql->select("SELECT *
@@ -211,6 +211,26 @@ class User extends Model{
         {
             return $results[0];
         }
+    }
+
+    public static function setForgotUsed($idrecovery){
+
+        $sql = new Sql();
+
+        $sql->query("UPDATE tb_userspasswordsrecoveries SET dtrecovery = NOW() WHERE idrecovery = :idrecovery", array(
+            ":idrecovery"=>$idrecovery
+        ));
+
+    }
+
+    public function setPassword($password){
+
+        $sql = new Sql();
+
+        $sql->query("UPDATE tb_users SET despassword = :password WHERE iduser = :iduser", array(
+            ":password"=>$password,
+            ":iduser"=>$this->getiduser()
+        ));
     }
 }    
 ?>
