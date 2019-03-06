@@ -88,7 +88,7 @@ $app->get("/admin/products/:idproduct/delete", function($idproduct){
     
     $product->delete();
 
-    header('Location: /ecommer/index.php/admin/products');
+    header('Location: /ecommerce/index.php/admin/products');
     exit;
 
 });    

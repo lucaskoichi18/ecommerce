@@ -3,105 +3,147 @@
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
 use \Hcode\Model\Category;
+use \Hcode\Model\Product;
 
 $app->get("/admin/categories", function(){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$categories = Category::listAll();
+    $categories = Category::listAll();
 
-$page = new PageAdmin();
+    $page = new PageAdmin();
 
-$page->setTpl("/categories", [
-    'categories'=>$categories
-]);
+    $page->setTpl("/categories", [
+        'categories'=>$categories
+    ]);
 
 });
 
 $app->get("/admin/categories/create", function(){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$page = new PageAdmin();
+    $page = new PageAdmin();
 
-$page->setTpl("/categories-create");
+    $page->setTpl("/categories-create");
 
 });
 
 $app->post("/admin/categories/create", function(){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$category = new Category();
+    $category = new Category();
 
-$category->setData($_POST);
+    $category->setData($_POST);
 
-$category->save();
+    $category->save();
 
-header("Location: /ecommerce/index.php/admin/categories");
-exit;
+    header("Location: /ecommerce/index.php/admin/categories");
+    exit;
 
 });
 
 $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$category = new Category();
+    $category = new Category();
 
-$category->get((int)$idcategory);
+    $category->get((int)$idcategory);
 
-$category->delete();
+    $category->delete();
 
-header("Location: /ecommerce/index.php/admin/categories");
-exit;
+    header("Location: /ecommerce/index.php/admin/categories");
+    exit;
 
 });
 
 $app->get("/admin/categories/:idcategory", function($idcategory){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$category = new Category();
+    $category = new Category();
 
-$category->get((int)$idcategory);
+    $category->get((int)$idcategory);
 
-$page = new PageAdmin();
+    $page = new PageAdmin();
 
-$page->setTpl("categories-update", [
-    'category'=>$category->getValues()
-]);
+    $page->setTpl("categories-update", [
+        'category'=>$category->getValues()
+    ]);
 
 });
 
 $app->post("/admin/categories/:idcategory", function($idcategory){
 
-User::verifyLogin();
+    User::verifyLogin();
 
-$category = new Category();
+    $category = new Category();
 
-$category->get((int)$idcategory);
+    $category->get((int)$idcategory);
 
-$category->setData($_POST);
+    $category->setData($_POST);
 
-$category->save();
+    $category->save();
 
-header("Location: /ecommerce/index.php/admin/categories");
-exit;
+    header("Location: /ecommerce/index.php/admin/categories");
+    exit;
 });
 
-$app->get("/categories/:idcategory", function($idcategory){
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
 
-$category = new Category();
+    User::verifyLogin();
 
-$category->get((int)$idcategory);
+    $category = new Category();
+    
+    $category->get((int)$idcategory);
+    
+    $page = new PageAdmin();
+    
+    $page->setTpl("categories-products", [
+        'category'=>$category->getValues(),
+        'productsRelated'=>$category->getProducts(),
+        'productsNotRelated'=>$category->getProducts(false)
+    ]);
+});
 
-$page = new Page();
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function($idcategory, $idproduct){
 
-$page->setTpl("category", [
-    'category'=>$category->getValues(),
-    'products'=> []
-]);
-}); 
+    User::verifyLogin();
+
+    $category = new Category();
+    
+    $category->get((int)$idcategory);
+
+    $product = new Product();
+
+    $product->get((int)$idproduct);
+
+    $category->addProduct($product);
+
+    header("Location: /ecommerce/index.php/admin/categories/".$idcategory."/products");
+    exit;
+
+});
+
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function($idcategory, $idproduct){
+
+    User::verifyLogin();
+
+    $category = new Category();
+    
+    $category->get((int)$idcategory);
+
+    $product = new Product();
+
+    $product->get((int)$idproduct);
+
+    $category->removeProduct($product);
+
+    header("Location: /ecommerce/index.php/admin/categories/".$idcategory."/products");
+    exit;
+
+});
 
 ?>
