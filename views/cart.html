@@ -19,7 +19,7 @@
                 <div class="product-content-right">
                     <div class="woocommerce">
 
-                        <form action="/checkout">
+                        <form action="/ecommerce/index.php/checkout">
                             
                             {if="$error != ''"}
                             <div class="alert alert-danger" role="alert">
@@ -106,7 +106,6 @@
                                             <tr class="order-total">
                                                 <th>Total</th>
                                                 <td><strong><span class="amount">R${function="formatPrice($cart.vltotal)"}</span></strong> </td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
